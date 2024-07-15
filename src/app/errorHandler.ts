@@ -4,6 +4,7 @@ import { JsonWebTokenError } from "jsonwebtoken";
 import { ZodError } from "zod";
 import config from "../config";
 import AppError from "../errors/AppError";
+import handleCastError from "../errors/handleMongooseCastError";
 import handleMongooseDuplicateIdError from "../errors/handleMongooseDuplicateIdError";
 import handleMongooseValidationError from "../errors/handleMongooseValidationError";
 import handleZodError from "../errors/handleZodError";
@@ -40,6 +41,12 @@ const global: ErrorRequestHandler = (error, _req, res, _next) => {
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorMessages = simplifiedError.errorMessages;
+  } else if (error?.name === "CastError") {
+    const simplifiedError = handleCastError(error);
+
+    statusCode = simplifiedError?.statusCode;
+    message = simplifiedError?.message;
+    errorMessages = simplifiedError?.errorMessages;
   } else if (error?.code === 11000) {
     const simplifiedError = handleMongooseDuplicateIdError(error);
 

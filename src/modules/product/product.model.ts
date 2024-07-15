@@ -1,6 +1,10 @@
-import { Schema, model } from "mongoose";
+import httpStatus from "http-status";
+import { Schema, isValidObjectId, model } from "mongoose";
+import slugify from "slugify";
+import { uid } from "uid";
+import AppError from "../../errors/AppError";
 import { ProductStatus } from "./product.constant";
-import { TProduct } from "./product.interface";
+import { IProduct, IProductModel } from "./product.interface";
 
 const galleryImageSchema = new Schema({
   url: {
@@ -13,14 +17,14 @@ const galleryImageSchema = new Schema({
   },
 });
 
-const productSchema = new Schema<TProduct>({
+const productSchema = new Schema<IProduct, IProductModel>({
   name: {
     type: String,
     required: [true, "Name is required"],
   },
   slug: {
     type: String,
-    required: [true, "Slug is required"],
+    unique: true,
   },
   price: {
     type: Number,
@@ -79,5 +83,33 @@ const productSchema = new Schema<TProduct>({
   galleryImages: [galleryImageSchema],
 });
 
-const Product = model<TProduct>("Product", productSchema);
+productSchema.pre("save", async function (next) {
+  const time = new Date().getTime();
+  let slug = slugify(`${this.name}-${time}`, { lower: true });
+
+  // Ensure the slug is unique
+  const existingProduct = await Product.findOne({ slug });
+  if (existingProduct) {
+    const uniqueSuffix = uid(8);
+    slug = slugify(`${this.name}-${time}-${uniqueSuffix}`, { lower: true });
+  }
+
+  this.slug = slug;
+  next();
+});
+
+productSchema.statics.getProductByProperty = async function (
+  property: string,
+  value: string,
+) {
+  if (property === "_id") {
+    if (!isValidObjectId(value)) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Invalid ObjectId");
+    }
+    return this.findById(value);
+  }
+  return this.findOne({ [property]: value });
+};
+
+const Product = model<IProduct, IProductModel>("Product", productSchema);
 export default Product;

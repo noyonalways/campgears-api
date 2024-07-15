@@ -52,15 +52,23 @@ const create = z.object({
           required_error: "Tags is required",
           invalid_type_error: "Tags must be array",
         }),
+        {
+          required_error: "Tags is required",
+          invalid_type_error: "Tags must be array",
+        },
       ),
-      galleryImages: z.array(
-        z
-          .string({
+      galleryImages: z
+        .array(
+          z.string({
             required_error: "Gallery is required",
             invalid_type_error: "Gallery must be array",
-          })
-          .optional(),
-      ),
+          }),
+          {
+            required_error: "Gallery is required",
+            invalid_type_error: "Gallery must be array",
+          },
+        )
+        .optional(),
     })
     .strict(),
 });
