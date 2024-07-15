@@ -54,10 +54,12 @@ const create = z.object({
         }),
       ),
       galleryImages: z.array(
-        z.string({
-          required_error: "Gallery is required",
-          invalid_type_error: "Gallery must be array",
-        }),
+        z
+          .string({
+            required_error: "Gallery is required",
+            invalid_type_error: "Gallery must be array",
+          })
+          .optional(),
       ),
     })
     .strict(),

@@ -15,7 +15,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/noyonalways/l2-assignment-3">
-    <img src="https://i.ibb.co/c64q254/noyon-logo-dark.png" alt="Logo" width="80" height="80">
+    <img src="https://i.ibb.co/YNpm6rx/campgears-logo.png" alt="Logo" width="240" >
   </a>
   <h3 align="center">CAMPGEARS API</h3>
     <p align="center">
