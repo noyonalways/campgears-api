@@ -12,6 +12,13 @@ router
     productController.create,
   );
 
-router.route("/:id").get(productController.getSingle);
+router
+  .route("/:id")
+  .get(productController.getSingle)
+  .patch(
+    validateRequest(productValidationSchema.update),
+    productController.update,
+  )
+  .delete(productController.deleteSingle);
 
 export default router;

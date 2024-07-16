@@ -83,6 +83,21 @@ const productSchema = new Schema<IProduct, IProductModel>({
   galleryImages: [galleryImageSchema],
 });
 
+productSchema.pre("find", function (this, next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+productSchema.pre("findOne", function (this, next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
+productSchema.pre("findOneAndUpdate", function (this, next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
 productSchema.pre("save", async function (next) {
   const time = new Date().getTime();
   let slug = slugify(`${this.name}-${time}`, { lower: true });
@@ -95,6 +110,19 @@ productSchema.pre("save", async function (next) {
   }
 
   this.slug = slug;
+  next();
+});
+
+// modify the stock status based on the stock quantity while updating a product
+productSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+  if (update && typeof update === "object") {
+    if ("stockQuantity" in update) {
+      if (update.status === "in-stock" || update.status === "out-of-stock") {
+        update.status = update.stockQuantity > 0 ? "in-stock" : "out-of-stock";
+      }
+    }
+  }
   next();
 });
 
