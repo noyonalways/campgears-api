@@ -3,7 +3,17 @@ import { catchAsync, sendResponse } from "../../utils";
 import { productService } from "./product.service";
 
 const getAll = catchAsync(async (req, res) => {
-  const products = await productService.getAll();
+  const products = await productService.getAll(req.query);
+
+  if (products.length <= 0) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: "No Data found",
+      data: products,
+    });
+  }
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

@@ -1,10 +1,16 @@
 import httpStatus from "http-status";
+import QueryBuilder from "mongoose-dynamic-querybuilder";
 import AppError from "../../errors/AppError";
 import { IProduct } from "./product.interface";
 import Product from "./product.model";
 
-const getAll = () => {
-  return Product.find();
+const getAll = (query: Record<string, unknown>) => {
+  const productQuery = new QueryBuilder(Product.find({}), query)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  return productQuery.modelQuery;
 };
 
 const create = (payload: IProduct) => {
