@@ -59,7 +59,7 @@ const update = async (productId: string, payload: IProduct) => {
 const deleteSingle = async (productId: string) => {
   const product = await Product.getProductByProperty("_id", productId);
   if (!product) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Product not found");
+    throw new AppError(httpStatus.NOT_FOUND, "Product not found");
   }
   return Product.findByIdAndUpdate(
     productId,
