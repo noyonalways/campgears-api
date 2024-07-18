@@ -1,12 +1,13 @@
+import { Document, Model } from "mongoose";
+
 export type TProductStatus = "in-stock" | "out-of-stock" | "discontinued";
 
-export type TGalleryImage = {
-  id: string;
+export interface IGalleryImage {
   url: string;
   alt: string;
-};
+}
 
-export type TProduct = {
+export interface IProduct {
   slug: string;
   name: string;
   description: string;
@@ -21,5 +22,12 @@ export type TProduct = {
   image: string;
   isFeatured: boolean;
   isDeleted: boolean;
-  galleryImages: TGalleryImage[];
-};
+  galleryImages: IGalleryImage[];
+}
+
+export interface IProductModel extends Model<IProduct> {
+  getProductByProperty: (
+    property: string,
+    value: string,
+  ) => Promise<(IProduct & Document) | null>;
+}
