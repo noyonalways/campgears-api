@@ -34,7 +34,7 @@ const create = catchAsync(async (req, res) => {
 
 const getSingle = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const product = await productService.getProductByProperty("_id", id);
+  const product = await productService.getSingle("_id", id);
   if (!product) {
     return sendResponse(res, {
       success: false,

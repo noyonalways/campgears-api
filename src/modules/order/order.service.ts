@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import QueryBuilder from "mongoose-dynamic-querybuilder";
 import AppError from "../../errors/AppError";
+import Discount from "../discount/discount.model";
 import Product from "../product/product.model";
-import { IOrder } from "./order.interface";
+import { IDiscount, IOrder } from "./order.interface";
 import Order from "./order.model";
 
 const create = async (payload: IOrder) => {
@@ -10,7 +11,7 @@ const create = async (payload: IOrder) => {
   session.startTransaction();
 
   try {
-    const { orderItems, ...restProperties } = payload;
+    const { orderItems, discount, ...restProperties } = payload;
 
     const updatedOrderItems = [];
 
@@ -57,10 +58,35 @@ const create = async (payload: IOrder) => {
     const tax = payload.tax || 0;
     const totalPrice = itemsPrice + shippingCost + tax;
 
-    // Calculate price after discount
-    const totalPriceAfterDiscount = payload?.discount
-      ? totalPrice - payload.discount.amount
-      : totalPrice;
+    let totalPriceAfterDiscount;
+    let discountInDB;
+
+    if (!discount) {
+      // Calculate price after discount
+      totalPriceAfterDiscount = totalPrice;
+    } else {
+      // TODO: add discount validation
+      discountInDB = await Discount.getDiscountByProperty(
+        "code",
+        discount.code,
+      );
+      if (!discountInDB) {
+        throw new AppError(404, "Discount not found");
+      }
+
+      if (!discountInDB.active) {
+        throw new AppError(400, "Discount is not active");
+      }
+
+      totalPriceAfterDiscount = totalPrice - discountInDB.amount;
+    }
+
+    // Modify discount object to send to the order
+    const modifiedDiscount: IDiscount = {
+      amount: discountInDB?.amount || 0,
+      code: discountInDB?.code || "",
+      description: discountInDB?.description || "",
+    };
 
     const orderData = {
       ...restProperties,
@@ -68,6 +94,7 @@ const create = async (payload: IOrder) => {
       itemsPrice,
       totalPrice,
       totalPriceAfterDiscount,
+      discount: modifiedDiscount,
     };
 
     // Create the order

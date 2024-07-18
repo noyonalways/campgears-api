@@ -1,4 +1,6 @@
-import { Schema, model } from "mongoose";
+import httpStatus from "http-status";
+import { Schema, isValidObjectId, model } from "mongoose";
+import AppError from "../../errors/AppError";
 import { DiscountType } from "./discount.constant";
 import { IDiscount, IDiscountModel } from "./discount.interface";
 
@@ -33,6 +35,14 @@ const discountSchema = new Schema<IDiscount, IDiscountModel>(
       type: Date,
       default: null,
     },
+    itemsTotalPrice: {
+      type: Number,
+      default: 0,
+    },
+    amount: {
+      type: Number,
+      default: 0,
+    },
     type: {
       type: String,
       enum: {
@@ -46,6 +56,19 @@ const discountSchema = new Schema<IDiscount, IDiscountModel>(
     timestamps: true,
   },
 );
+
+discountSchema.statics.getDiscountByProperty = function (
+  property: string,
+  value: string,
+) {
+  if (property === "_id") {
+    if (!isValidObjectId(value)) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Invalid ObjectId");
+    }
+    return this.findById(value);
+  }
+  return this.findOne({ [property]: value });
+};
 
 const Discount = model<IDiscount, IDiscountModel>("Discount", discountSchema);
 export default Discount;

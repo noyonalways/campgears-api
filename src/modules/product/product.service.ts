@@ -17,7 +17,7 @@ const create = (payload: IProduct) => {
   return Product.create(payload);
 };
 
-const getProductByProperty = (property: string, value: string) => {
+const getSingle = (property: string, value: string) => {
   return Product.getProductByProperty(property, value);
 };
 
@@ -71,7 +71,7 @@ const deleteSingle = async (productId: string) => {
 export const productService = {
   getAll,
   create,
-  getProductByProperty,
+  getSingle,
   update,
   deleteSingle,
 };
