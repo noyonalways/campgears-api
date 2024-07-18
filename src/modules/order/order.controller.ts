@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { catchAsync, sendResponse } from "../../utils";
 import { orderService } from "./order.service";
 
+// create
 const create = catchAsync(async (req, res) => {
   const order = await orderService.create(req.body);
   sendResponse(res, {
@@ -12,6 +13,7 @@ const create = catchAsync(async (req, res) => {
   });
 });
 
+// get all
 const getAll = catchAsync(async (req, res) => {
   const orders = await orderService.getAll(req.query);
 
