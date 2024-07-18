@@ -6,6 +6,7 @@ const router: Router = Router();
 
 router
   .route("/")
+  .get(orderController.getAll)
   .post(validateRequest(orderValidationSchema.create), orderController.create);
 
 export default router;
