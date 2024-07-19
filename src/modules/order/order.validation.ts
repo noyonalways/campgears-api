@@ -35,15 +35,8 @@ const discountValidationSchema = z
       required_error: "Discount code is required",
       invalid_type_error: "Discount code must be a string",
     }),
-    amount: z.number({
-      required_error: "Discount amount is required",
-      invalid_type_error: "Discount amount must be a number",
-    }),
-    description: z.string({
-      required_error: "Discount description is required",
-      invalid_type_error: "Discount description must be a string",
-    }),
   })
+  .strict()
   .nullable()
   .optional();
 
