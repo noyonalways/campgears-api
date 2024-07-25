@@ -60,16 +60,17 @@ const create = async (payload: IOrder) => {
 
     let totalPriceAfterDiscount;
     let discountInDB;
+    let discountAmount = 0;
 
     if (!discount) {
       // Calculate price after discount
       totalPriceAfterDiscount = totalPrice;
     } else {
       // TODO: add discount validation
-      discountInDB = await Discount.getDiscountByProperty(
-        "code",
-        discount.code,
-      );
+      discountInDB = await Discount.findOne({
+        code: discount.code,
+      }).session(session);
+
       if (!discountInDB) {
         throw new AppError(404, "Discount not found");
       }
@@ -78,12 +79,23 @@ const create = async (payload: IOrder) => {
         throw new AppError(400, "Discount is not active");
       }
 
-      totalPriceAfterDiscount = totalPrice - discountInDB.amount;
+      if (discountInDB.type === "percentage") {
+        discountAmount = parseFloat(
+          ((totalPrice * discountInDB.discountValue) / 100).toFixed(2),
+        );
+        totalPriceAfterDiscount = totalPrice - discountAmount;
+      }
+      if (discountInDB.type === "fixed") {
+        discountAmount = discountInDB.discountValue;
+        totalPriceAfterDiscount = totalPrice - discountAmount;
+      }
+
+      totalPriceAfterDiscount = totalPrice - discountAmount;
     }
 
     // Modify discount object to send to the order
     const modifiedDiscount: IDiscount = {
-      amount: discountInDB?.amount || 0,
+      amount: discountAmount,
       code: discountInDB?.code || "",
       description: discountInDB?.description || "",
     };
@@ -96,6 +108,11 @@ const create = async (payload: IOrder) => {
       totalPriceAfterDiscount,
       discount: modifiedDiscount,
     };
+
+    if (discountInDB) {
+      discountInDB.amount = 0;
+      await discountInDB.save({ session });
+    }
 
     // Create the order
     const order = await Order.create([orderData], { session });
