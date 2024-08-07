@@ -5,3 +5,13 @@ export const ProductStatus: TProductStatus[] = [
   "out-of-stock",
   "discontinued",
 ];
+
+export const SearchFields = [
+  "name",
+  "description",
+  "slug",
+  "color",
+  "category",
+  "subCategory",
+  "brand",
+];

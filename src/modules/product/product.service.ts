@@ -1,6 +1,7 @@
 import httpStatus from "http-status";
 import QueryBuilder from "mongoose-dynamic-querybuilder";
 import AppError from "../../errors/AppError";
+import { SearchFields } from "./product.constant";
 import { IProduct } from "./product.interface";
 import Product from "./product.model";
 
@@ -9,7 +10,8 @@ const getAll = (query: Record<string, unknown>) => {
     .filter()
     .sort()
     .paginate()
-    .fields();
+    .fields()
+    .search(SearchFields);
   return productQuery.modelQuery;
 };
 
