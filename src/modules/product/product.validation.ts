@@ -60,14 +60,16 @@ const create = z.object({
       ),
       galleryImages: z
         .array(
-          z.string({
-            required_error: "Gallery is required",
-            invalid_type_error: "Gallery must be array",
+          z.object({
+            url: z.string({
+              required_error: "Url is required",
+              invalid_type_error: "Url must be string",
+            }),
+            alt: z.string({
+              required_error: "Alt is required",
+              invalid_type_error: "Alt must be string",
+            }),
           }),
-          {
-            required_error: "Gallery is required",
-            invalid_type_error: "Gallery must be array",
-          },
         )
         .optional(),
     })
