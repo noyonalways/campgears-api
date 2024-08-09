@@ -24,6 +24,7 @@ const create = z.object({
         required_error: "Stock quantity is required",
         invalid_type_error: "Stock quantity must be number",
       }),
+      status: z.enum([...ProductStatus] as [string, ...string[]]).optional(),
       brand: z.string({
         required_error: "Brand is required",
         invalid_type_error: "Brand must be string",
@@ -44,18 +45,20 @@ const create = z.object({
         required_error: "Image is required",
         invalid_type_error: "Image must be string",
       }),
-      isFeatured: z.boolean({
-        required_error: "Is featured is required",
-        invalid_type_error: "Is featured must be boolean",
-      }),
+      isFeatured: z
+        .boolean({
+          required_error: "Is featured is required",
+          invalid_type_error: "Is featured must be boolean",
+        })
+        .optional(),
       tags: z.array(
         z.string({
-          required_error: "Tags is required",
-          invalid_type_error: "Tags must be array",
+          required_error: "Tag is required",
+          invalid_type_error: "Tag must be string",
         }),
         {
           required_error: "Tags is required",
-          invalid_type_error: "Tags must be array",
+          invalid_type_error: "Tags must be an array of strings",
         },
       ),
       galleryImages: z
