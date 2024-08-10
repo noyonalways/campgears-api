@@ -87,14 +87,12 @@ const update = z.object({
           required_error: "Name is required",
           invalid_type_error: "Name must be string",
         })
-        .min(1, { message: "Name must be at least 1 character" })
         .optional(),
       description: z
         .string({
           required_error: "Description is required",
           invalid_type_error: "Description must be string",
         })
-        .min(10, { message: "Description must be at least 10 characters" })
         .optional(),
       price: z
         .number({
