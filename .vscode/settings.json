@@ -12,6 +12,7 @@
     "datetime",
     "maxlength",
     "Noyon",
+    "querybuilder",
     "Rahman"
   ]
 }

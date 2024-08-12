@@ -6,12 +6,20 @@ import { IProduct } from "./product.interface";
 import Product from "./product.model";
 
 const getAll = (query: Record<string, unknown>) => {
-  const productQuery = new QueryBuilder(Product.find({}), query)
-    .filter()
-    .sort()
-    .paginate()
-    .fields()
-    .search(SearchFields);
+  let productQuery;
+
+  if (query.minPrice && query.maxPrice) {
+    productQuery = new QueryBuilder(Product.find({}), query).extraFilter({
+      price: { $gte: Number(query.minPrice), $lte: Number(query.maxPrice) },
+    });
+  } else {
+    productQuery = new QueryBuilder(Product.find({}), query)
+      .filter()
+      .sort()
+      .paginate()
+      .fields()
+      .search(SearchFields);
+  }
   return productQuery.modelQuery;
 };
 
