@@ -9,9 +9,14 @@ const getAll = (query: Record<string, unknown>) => {
   let productQuery;
 
   if (query.minPrice && query.maxPrice) {
-    productQuery = new QueryBuilder(Product.find({}), query).extraFilter({
-      price: { $gte: Number(query.minPrice), $lte: Number(query.maxPrice) },
-    });
+    productQuery = new QueryBuilder(Product.find({}), query)
+      .extraFilter({
+        price: { $gte: Number(query.minPrice), $lte: Number(query.maxPrice) },
+      })
+      .sort()
+      .paginate()
+      .fields()
+      .search(SearchFields);
   } else {
     productQuery = new QueryBuilder(Product.find({}), query)
       .filter()
