@@ -94,11 +94,13 @@ const create = async (payload: IOrder) => {
     }
 
     // Modify discount object to send to the order
-    const modifiedDiscount: IDiscount = {
-      amount: discountAmount,
-      code: discountInDB?.code || "",
-      description: discountInDB?.description || "",
-    };
+    const modifiedDiscount: IDiscount | null = discount
+      ? {
+          amount: discountAmount,
+          code: discountInDB?.code || "",
+          description: discountInDB?.description || "",
+        }
+      : null;
 
     const orderData = {
       ...restProperties,
