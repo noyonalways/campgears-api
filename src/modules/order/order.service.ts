@@ -142,7 +142,12 @@ const getAll = (query: Record<string, unknown>) => {
   return orderQuery.modelQuery;
 };
 
+const getSingle = (property: string, value: string) => {
+  return Order.getOrderByProperty(property, value);
+};
+
 export const orderService = {
   create,
   getAll,
+  getSingle,
 };

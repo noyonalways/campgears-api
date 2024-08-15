@@ -9,4 +9,6 @@ router
   .get(orderController.getAll)
   .post(validateRequest(orderValidationSchema.create), orderController.create);
 
+router.get("/:id", orderController.getSingle);
+
 export default router;
