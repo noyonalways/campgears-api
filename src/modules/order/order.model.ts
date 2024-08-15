@@ -1,4 +1,6 @@
-import { Schema, model } from "mongoose";
+import httpStatus from "http-status";
+import { Schema, isValidObjectId, model } from "mongoose";
+import AppError from "../../errors/AppError";
 import { OrderStatus, PaymentMethods } from "./order.constant";
 import { IOrder, IOrderItem, IOrderModel } from "./order.interface";
 
@@ -131,6 +133,19 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
   },
   { timestamps: true },
 );
+
+orderSchema.statics.getOrderByProperty = async function (
+  property: string,
+  value: string,
+) {
+  if (property === "_id") {
+    if (!isValidObjectId(value)) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Invalid ObjectId");
+    }
+    return this.findById(value);
+  }
+  return this.findOne({ [property]: value });
+};
 
 const Order = model<IOrder, IOrderModel>("Order", orderSchema);
 export default Order;

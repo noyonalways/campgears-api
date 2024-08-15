@@ -34,7 +34,28 @@ const getAll = catchAsync(async (req, res) => {
   });
 });
 
+// get order by order id
+const getSingle = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const product = await orderService.getSingle("_id", id);
+  if (!product) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: "Order not found",
+      data: undefined,
+    });
+  }
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Order fetched successfully",
+    data: product,
+  });
+});
+
 export const orderController = {
   create,
   getAll,
+  getSingle,
 };
