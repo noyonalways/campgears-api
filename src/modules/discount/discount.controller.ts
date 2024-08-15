@@ -34,11 +34,11 @@ const getAll = catchAsync(async (req, res) => {
   });
 });
 
-// get single
+// apply discount by code
 const applyDiscountByCode = catchAsync(async (req, res) => {
   const { code } = req.params;
   const { itemsTotalPrice } = req.body;
-  const product = await discountService.getDiscountByCode(
+  const product = await discountService.applyDiscountByCode(
     code,
     itemsTotalPrice,
   );

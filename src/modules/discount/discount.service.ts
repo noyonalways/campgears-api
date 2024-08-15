@@ -1,4 +1,5 @@
 import QueryBuilder from "mongoose-dynamic-querybuilder";
+import AppError from "../../errors/AppError";
 import { IDiscount } from "./discount.interface";
 import Discount from "./discount.model";
 
@@ -15,15 +16,15 @@ const getAll = (query: Record<string, unknown>) => {
   return discountQuery.modelQuery;
 };
 
-const getDiscountByCode = async (code: string, itemsTotalPrice: number) => {
+const applyDiscountByCode = async (code: string, itemsTotalPrice: number) => {
   const discount = await Discount.getDiscountByProperty("code", code);
 
   if (!discount) {
-    throw new Error("Discount not found");
+    throw new AppError(400, "Invalid Discount code");
   }
 
   if (!discount.active) {
-    throw new Error("Discount is not active");
+    throw new AppError(400, "Discount is not active");
   }
 
   let discountAmount = 0;
@@ -36,13 +37,14 @@ const getDiscountByCode = async (code: string, itemsTotalPrice: number) => {
     discountAmount = discount.amount;
   }
 
+  discount.itemsTotalPrice = itemsTotalPrice;
   discount.amount = discountAmount;
 
-  return discount.save();
+  return discount;
 };
 
 export const discountService = {
   create,
   getAll,
-  getDiscountByCode,
+  applyDiscountByCode,
 };
