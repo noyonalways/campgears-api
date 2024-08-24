@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 import QueryBuilder from "mongoose-dynamic-querybuilder";
+import { uid } from "uid";
 import AppError from "../../errors/AppError";
 import Discount from "../discount/discount.model";
+import { initialSession } from "../payment/payment.utils";
 import Product from "../product/product.model";
 import { IDiscount, IOrder } from "./order.interface";
 import Order from "./order.model";
@@ -56,7 +58,7 @@ const create = async (payload: IOrder) => {
     // Calculate total price
     const shippingCost = payload.shippingCost || 0;
     const tax = payload.tax || 0;
-    const totalPrice = itemsPrice + shippingCost + tax;
+    const totalPrice: number = itemsPrice + shippingCost + tax;
 
     let totalPriceAfterDiscount;
     let discountInDB;
@@ -102,6 +104,29 @@ const create = async (payload: IOrder) => {
         }
       : null;
 
+    if (discountInDB) {
+      discountInDB.amount = 0;
+      await discountInDB.save({ session });
+    }
+
+    let paymentMethod;
+    let paymentSession;
+    const transactionId = `TXN-${uid()}`;
+
+    if (restProperties.paymentMethod === "stripe") {
+      paymentSession = await initialSession({
+        customerEmail: restProperties.userEmail,
+        items: updatedOrderItems,
+        shippingCost,
+        transactionId,
+      });
+      paymentMethod = "stripe";
+    }
+
+    if (restProperties.paymentMethod === "cash") {
+      paymentMethod = "cash";
+    }
+
     const orderData = {
       ...restProperties,
       orderItems: updatedOrderItems,
@@ -109,12 +134,9 @@ const create = async (payload: IOrder) => {
       totalPrice,
       totalPriceAfterDiscount,
       discount: modifiedDiscount,
+      paymentMethod,
+      transactionId,
     };
-
-    if (discountInDB) {
-      discountInDB.amount = 0;
-      await discountInDB.save({ session });
-    }
 
     // Create the order
     const order = await Order.create([orderData], { session });
@@ -125,7 +147,11 @@ const create = async (payload: IOrder) => {
     await session.commitTransaction();
     session.endSession();
 
-    return order[0];
+    return {
+      transactionId,
+      email: restProperties.userEmail,
+      sessionId: paymentSession?.id,
+    };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

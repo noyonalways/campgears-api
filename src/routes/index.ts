@@ -2,6 +2,7 @@ import { Router } from "express";
 import discountRoutes from "../modules/discount/discount.routes";
 import faqQuestionRoutes from "../modules/faq-question/faqQuestion.routes";
 import orderRoutes from "../modules/order/order.routes";
+import paymentRoutes from "../modules/payment/payment.routes";
 import productRoutes from "../modules/product/product.routes";
 import reviewRoutes from "../modules/review/review.routes";
 
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: "/faq-questions",
     routes: faqQuestionRoutes,
+  },
+  {
+    path: "/payment",
+    routes: paymentRoutes,
   },
 ];
 
