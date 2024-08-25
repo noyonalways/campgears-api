@@ -69,7 +69,6 @@ const create = async (payload: IOrder) => {
       // Calculate price after discount
       totalPriceAfterDiscount = totalPrice;
     } else {
-      // TODO: add discount validation
       discountInDB = await Discount.findOne({
         code: discount.code,
       }).session(session);
@@ -84,7 +83,7 @@ const create = async (payload: IOrder) => {
 
       if (discountInDB.type === "percentage") {
         discountAmount = parseFloat(
-          ((totalPrice * discountInDB.discountValue) / 100).toFixed(2),
+          ((itemsPrice * discountInDB.discountValue) / 100).toFixed(2),
         );
         totalPriceAfterDiscount = totalPrice - discountAmount;
       }
