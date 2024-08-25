@@ -1,4 +1,8 @@
-import { TOrderStatus, TPaymentMethod } from "./order.interface";
+import {
+  TOrderStatus,
+  TPaymentMethod,
+  TPaymentStatus,
+} from "./order.interface";
 
 export const OrderStatus: TOrderStatus[] = [
   "pending",
@@ -8,3 +12,8 @@ export const OrderStatus: TOrderStatus[] = [
 ];
 
 export const PaymentMethods: TPaymentMethod[] = ["cash", "stripe"];
+export const PaymentStatus: TPaymentStatus[] = [
+  "pending",
+  "succeeded",
+  "failed",
+];

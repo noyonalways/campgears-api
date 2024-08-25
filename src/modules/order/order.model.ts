@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import { Schema, isValidObjectId, model } from "mongoose";
 import AppError from "../../errors/AppError";
-import { OrderStatus, PaymentMethods } from "./order.constant";
+import { OrderStatus, PaymentMethods, PaymentStatus } from "./order.constant";
 import { IOrder, IOrderItem, IOrderModel } from "./order.interface";
 
 const discountSchema = new Schema(
@@ -64,6 +64,10 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
       type: String,
       required: [true, "User phone is required"],
     },
+    transactionId: {
+      type: String,
+      required: [true, "Transaction ID is required"],
+    },
     orderItems: {
       type: [orderItemSchema],
       required: [true, "Order items is required"],
@@ -101,9 +105,13 @@ const orderSchema = new Schema<IOrder, IOrderModel>(
       type: Boolean,
       default: false,
     },
-    isPaid: {
-      type: Boolean,
-      default: false,
+    paymentStatus: {
+      type: String,
+      enum: {
+        values: PaymentStatus,
+        message: "{VALUE} is not supported",
+      },
+      default: "pending",
     },
     paidAt: {
       type: Date,
