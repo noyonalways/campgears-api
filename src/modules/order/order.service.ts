@@ -34,6 +34,7 @@ const create = async (payload: IOrder) => {
       }
       // Update the stock quantity for each product
       product.stockQuantity -= item.quantity;
+      product.status = product.stockQuantity > 0 ? "in-stock" : "out-of-stock";
       const updatedProduct = await product.save({ session });
       if (!updatedProduct) {
         throw new AppError(400, "Failed to update product stock");
@@ -109,6 +110,8 @@ const create = async (payload: IOrder) => {
       await discountInDB.save({ session });
     }
 
+    // payment process
+
     let paymentMethod;
     let paymentSession;
     const transactionId = `TXN-${uid()}`;
@@ -119,6 +122,7 @@ const create = async (payload: IOrder) => {
         items: updatedOrderItems,
         shippingCost,
         transactionId,
+        discountCode: discountInDB?.code,
       });
       paymentMethod = "stripe";
     }
@@ -127,6 +131,7 @@ const create = async (payload: IOrder) => {
       paymentMethod = "cash";
     }
 
+    // order create data
     const orderData = {
       ...restProperties,
       orderItems: updatedOrderItems,

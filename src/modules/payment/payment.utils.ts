@@ -8,6 +8,7 @@ interface IPaymentInput {
   customerEmail: string;
   shippingCost: number;
   transactionId: string;
+  discountCode?: string;
 }
 
 export const initialSession = async (paymentInput: IPaymentInput) => {
@@ -17,6 +18,7 @@ export const initialSession = async (paymentInput: IPaymentInput) => {
         currency: "usd",
         product_data: {
           name: item.name,
+          images: [item.image],
         },
 
         unit_amount: item.price * 100,
@@ -25,9 +27,10 @@ export const initialSession = async (paymentInput: IPaymentInput) => {
     };
   });
 
-  const successUrl = `http://localhost:5173/payment/confirmation?transactionId=${paymentInput.transactionId}&sessionId={CHECKOUT_SESSION_ID}&email=${paymentInput.customerEmail}`;
+  const successUrl = `${config.client_base_url}/payment/confirmation?transactionId=${paymentInput.transactionId}&sessionId={CHECKOUT_SESSION_ID}&email=${paymentInput.customerEmail}`;
+  const cancelUrl = `${config.client_base_url}/payment/order-cancel?transactionId=${paymentInput.transactionId}`;
 
-  const session = await stripe.checkout.sessions.create({
+  const sessionsCreateConfig: Stripe.Checkout.SessionCreateParams = {
     line_items: listItems,
     payment_method_types: ["card"],
     mode: "payment",
@@ -45,7 +48,19 @@ export const initialSession = async (paymentInput: IPaymentInput) => {
     ],
     customer_email: paymentInput.customerEmail,
     success_url: successUrl,
-    cancel_url: "http://localhost:5173/order-cancel",
+    cancel_url: cancelUrl,
+  };
+
+  if (paymentInput?.discountCode) {
+    sessionsCreateConfig.discounts = [
+      {
+        coupon: "nTRr1MRk",
+      },
+    ];
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    ...sessionsCreateConfig,
   });
 
   return session;

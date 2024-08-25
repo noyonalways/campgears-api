@@ -8,11 +8,18 @@ const confirmation = async (transactionId: string, sessionId: string) => {
     order = Order.findOneAndUpdate(
       { transactionId },
       { paymentStatus: "paid", paidAt: new Date() },
+      { new: true },
     );
   }
   return order;
 };
 
+const deleteCancelPaymentOrder = async (transactionId: string) => {
+  const order = Order.findOneAndDelete({ transactionId });
+  return order;
+};
+
 export const paymentServices = {
   confirmation,
+  deleteCancelPaymentOrder,
 };

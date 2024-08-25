@@ -17,6 +17,21 @@ const confirmation = catchAsync(async (req, res) => {
   });
 });
 
+const deleteCancelPaymentOrder = catchAsync(async (req, res) => {
+  const { transactionId } = req.query;
+  const order = await paymentServices.deleteCancelPaymentOrder(
+    transactionId as string,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Order deleted successfully",
+    data: order,
+  });
+});
+
 export const paymentController = {
   confirmation,
+  deleteCancelPaymentOrder,
 };
