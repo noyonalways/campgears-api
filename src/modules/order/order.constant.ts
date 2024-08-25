@@ -12,8 +12,4 @@ export const OrderStatus: TOrderStatus[] = [
 ];
 
 export const PaymentMethods: TPaymentMethod[] = ["cash", "stripe"];
-export const PaymentStatus: TPaymentStatus[] = [
-  "pending",
-  "succeeded",
-  "failed",
-];
+export const PaymentStatus: TPaymentStatus[] = ["pending", "paid", "failed"];
