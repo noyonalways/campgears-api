@@ -10,33 +10,118 @@
 
 </div>
 
-<!-- PROJECT LOGO -->
-
-<br />
 <div align="center">
-  <a href="https://github.com/noyonalways/l2-assignment-3">
-    <img src="https://i.ibb.co/YNpm6rx/campgears-logo.png" alt="Logo" width="240" >
-  </a>
-  <h3 align="center">CAMPGEARS API</h3>
-    <p align="center">
-      Campers accessories shop
-    <br />
-    <a href="#">
+<h3>Campgears API</h3>
+    <a href="https://campgears-api.vercel.app">
       <strong>Live Server Link »</strong>
     </a>
-    
-[![OverView Video][overview-video-shield]][overview-video-url]
-[![Postman API DOC][postman-shield]][postman-api-doc-url]
-
-  </p>
 </div>
 
 ## Overview:
+
+Campgears is a fully-featured e-commerce website that allows users to browse, search, and purchase camping equipment and accessories. The platform includes essential e-commerce functionalities such as product categorization, price filtering, product reviews, and a secure checkout process. The project is built with scalability and user experience in mind, utilizing modern web development technologies.
+
+## API Endpoints
+
+### Products
+
+- **POST** `/api/v1/products` (private) - admin
+- **GET** `/api/v1/products` (public) - anyone
+- **GET** `/api/v1/products/:productId` (public) - anyone
+- **PUT** `/api/v1/products/:productId` (private) - admin
+- **DELETE** `/api/v1/products/:productId` (private) - admin
+
+### FAQ Questions
+
+- **GET** `/api/v1/faqs`(public) - anyone
+- **POST** `/api/v1/faqs`(private) - admin
+
+### Orders
+
+- **POST** `/api/v1/orders` (private) - user
+- **GET** `/api/v1/orders` (private) - admin, user (user can see only own orders)
+- **GET** `/api/v1/orders/:orderId` (private) - admin, user (user can see only own orders)
+
+### Reviews
+
+- **POST** `/api/v1/products/:productId/reviews` (private) - user
+- **GET** `/api/v1/products/:productId/reviews` (public) - anyone
+
+### Discount
+
+- **POST** `/api/v1/discounts` (private) - admin
+- **GET** `/api/v1/discounts` (private) - admin
+- **GET** `/api/v1/discounts/:code` (public) - anyone
+
+## Technology Stack
+
+- Node.js
+- Express.js
+- TypeScript
+- Mongoose
+- Zod
+- Stripe
+
+## Installation Guideline
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm or yarn package manager
+- MongoDB installed locally or a cloud database URI
+
+### Installation Steps
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/noyonalways/campgears-api.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd campgears-api
+   ```
+3. Install the dependencies:
+   ```bash
+   npm install
+   ```
+   Or if you're using Yarn:
+   ```bash
+   yarn install
+   ```
+
+### Configuration
+
+Create a `.env` file in the root directory
+
+```bash
+PORT=5000 (you_can_change_the_port)
+DATABASE_URL=your_mongodb_atlas_url
+NODE_ENV=node_environment
+STRIPE_SECRET_KEY=your_stripe_secret_key
+CLIENT_BASE_URL=your_client_base_url
+```
+
+### Usage
+
+1. **Running the application:**
+
+   ```bash
+   npm run dev
+   ```
+
+   Or with Yarn:
+
+   ```bash
+   yarn dev
+   ```
+
+   This will start the development server on `http://localhost:5000`
 
 ## Contact:
 
 - Email: [noyonrahman2003@gmail.com](mailto:noyonrahman2003@gmail.com)
 - LinkedIn: [Noyon Rahman](https://linkedin.com/in/noyonalways)
+- Portfolio: [noyonrahman.xyz](https://noyonrahman.xyz)
 
 [youtube-shield]: https://img.shields.io/badge/-Youtube-black.svg?style=round-square&logo=youtube&color=555&logoColor=white
 [youtube-url]: https://youtube.com/@deskofnoyon
