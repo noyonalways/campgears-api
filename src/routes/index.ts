@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authRoutes from "../modules/auth/auth.routes";
 import discountRoutes from "../modules/discount/discount.routes";
 import faqQuestionRoutes from "../modules/faq-question/faqQuestion.routes";
 import orderRoutes from "../modules/order/order.routes";
@@ -8,7 +9,12 @@ import reviewRoutes from "../modules/review/review.routes";
 
 const router: Router = Router();
 
-const moduleRoutes = [
+interface IModuleRoute {
+  path: string;
+  routes: Router;
+}
+
+const moduleRoutes: IModuleRoute[] = [
   {
     path: "/products", // review
     routes: reviewRoutes,
@@ -32,6 +38,10 @@ const moduleRoutes = [
   {
     path: "/payment",
     routes: paymentRoutes,
+  },
+  {
+    path: "/auth",
+    routes: authRoutes,
   },
 ];
 
