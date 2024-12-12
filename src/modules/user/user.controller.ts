@@ -5,15 +5,6 @@ import { userService } from "./user.service";
 const getAll = catchAsync(async (req, res) => {
   const users = await userService.getAll(req.query);
 
-  if (users.length <= 0) {
-    return sendResponse(res, {
-      success: false,
-      statusCode: httpStatus.NOT_FOUND,
-      message: "No Data found",
-      data: users,
-    });
-  }
-
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
