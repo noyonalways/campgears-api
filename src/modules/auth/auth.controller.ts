@@ -63,7 +63,7 @@ const changePassword = catchAsync(async (req, res) => {
 
 // get me (current logged in user)
 const getMe = catchAsync(async (req, res) => {
-  const user = await authService.getMe(req.user);
+  const user = await authService.getMe(req.user, req.query);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

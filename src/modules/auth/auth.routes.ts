@@ -20,7 +20,7 @@ router.post(
 router.get(
   "/me",
   auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
-  authController.login,
+  authController.getMe,
 );
 
 router.post(

@@ -64,7 +64,7 @@ const deleteSingle = catchAsync(async (req, res) => {
   });
 });
 
-export const productController = {
+export const userController = {
   getAll,
   create,
   getSingle,

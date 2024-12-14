@@ -15,22 +15,14 @@ const create = catchAsync(async (req, res) => {
 
 // get all
 const getAll = catchAsync(async (req, res) => {
-  const discounts = await discountService.getAll(req.query);
-
-  if (discounts.length <= 0) {
-    return sendResponse(res, {
-      success: false,
-      statusCode: httpStatus.NOT_FOUND,
-      message: "No Data found",
-      data: discounts,
-    });
-  }
+  const { data, pagination } = await discountService.getAll(req.query);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Discounts fetched successfully",
-    data: discounts,
+    data,
+    meta: pagination,
   });
 });
 

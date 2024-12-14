@@ -1,6 +1,7 @@
 import httpStatus from "http-status";
 import { JwtPayload } from "jsonwebtoken";
 import { z } from "zod";
+import { SingleDocQueryBuilder } from "../../builders";
 import config from "../../config";
 import { AppError } from "../../errors";
 import Profile from "../profile/profile.model";
@@ -53,7 +54,7 @@ const register = async (
 };
 
 const login = async (payload: z.infer<typeof authValidation.login>["body"]) => {
-  const user = await User.findOne({ email: payload.email });
+  const user = await User.findOne({ email: payload.email }).select("+password");
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
@@ -85,12 +86,21 @@ const login = async (payload: z.infer<typeof authValidation.login>["body"]) => {
 };
 
 // get me (current logged in user)
-const getMe = async (payload: JwtPayload) => {
-  const user = await User.findOne({ email: payload.email });
-  if (!user) {
+const getMe = async (payload: JwtPayload, query: Record<string, unknown>) => {
+  const userProfile = await new SingleDocQueryBuilder(
+    Profile,
+    { email: payload.email },
+    query,
+  )
+    .selectFields() // Set the fields to select
+    .populate(["user"]) // Populate the category field if necessary
+    .execute(); // Execute the query
+
+  if (!userProfile) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
-  return user;
+
+  return userProfile;
 };
 
 // generate new access token

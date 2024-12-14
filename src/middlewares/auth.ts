@@ -28,7 +28,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
     // check the use is exists or not
     const user = await User.findOne({ email: email });
     if (!user) {
-      throw new AppError(httpStatus.NOT_FOUND, "User not found");
+      throw new AppError(httpStatus.NOT_FOUND, "User not found dfadf");
     }
 
     // check the user is already deleted

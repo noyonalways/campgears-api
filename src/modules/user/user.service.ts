@@ -1,17 +1,28 @@
 import httpStatus from "http-status";
-import QueryBuilder from "mongoose-dynamic-querybuilder";
+import { PaginatedQueryBuilder } from "../../builders";
 import AppError from "../../errors/AppError";
+import Profile from "../profile/profile.model";
 import { IUser } from "./user.interface";
 import User from "./user.model";
 
 // get all
-const getAll = (query: Record<string, unknown>) => {
-  const userQuery = new QueryBuilder(User.find({}), query)
+const getAll = async (query: Record<string, unknown>) => {
+  const queryBuilder = new PaginatedQueryBuilder(
+    Profile.find(),
+    query,
+    "/api/v1/users",
+  );
+
+  const result = await queryBuilder
     .filter()
+    .search()
     .sort()
+    .selectFields()
+    .populateFields(["user"])
     .paginate()
-    .fields();
-  return userQuery.modelQuery;
+    .execute();
+
+  return result;
 };
 
 // create
