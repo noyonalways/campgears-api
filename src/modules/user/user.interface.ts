@@ -1,23 +1,42 @@
-import { Document, Model } from "mongoose";
+import { JwtPayload } from "jsonwebtoken";
+import { Model } from "mongoose";
 
 export type TUserStatus = "active" | "inactive" | "blocked";
-export type TUserRole = "admin" | "user";
+export type TUserRole = "super-admin" | "admin" | "user";
 
 export interface IUser {
-  fullName: string;
   email: string;
   password: string;
   status: TUserStatus;
-  profileImage: string;
-  phone: string;
-  address: string;
   role: TUserRole;
   isDeleted: boolean;
+  needsPasswordChange?: boolean;
+  passwordChangeAt?: Date;
 }
 
 export interface IUserModel extends Model<IUser> {
-  getUserByProperty(
-    property: string,
-    value: string,
-  ): Promise<(IUser & Document) | null>;
+  getUserByProperty(property: string, value: string): Promise<IUser | null>;
+
+  generateHashPassword(
+    plainTextPassword: string,
+    saltRound?: number,
+  ): Promise<string>;
+
+  isPasswordMatch(
+    plainTextPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean>;
+
+  createToken(
+    jwtPayload: JwtPayload,
+    secret: string,
+    expiresIn: string,
+  ): string;
+
+  verifyToken(token: string, secret: string): JwtPayload;
+
+  isJWTIssuedBeforePasswordChanged(
+    passwordChangedTimestamp: Date,
+    jwtIssuedTimestamp: number,
+  ): boolean;
 }
