@@ -9,9 +9,9 @@ async function main() {
   // database connection
   await connectToDatabase();
 
-  server = app.listen(config.port, () => {
+  server = app.listen(config.PORT, () => {
     // eslint-disable-next-line no-console
-    console.log(`Server is listening on port ${config.port}`.green);
+    console.log(`Server is listening on port ${config.PORT}`.green);
   });
 }
 

@@ -1,4 +1,4 @@
-import QueryBuilder from "mongoose-dynamic-querybuilder";
+import { PaginatedQueryBuilder } from "../../builders";
 import AppError from "../../errors/AppError";
 import { IDiscount } from "./discount.interface";
 import Discount from "./discount.model";
@@ -7,13 +7,22 @@ const create = (payload: IDiscount) => {
   return Discount.create(payload);
 };
 
-const getAll = (query: Record<string, unknown>) => {
-  const discountQuery = new QueryBuilder(Discount.find({}), query)
+const getAll = async (query: Record<string, unknown>) => {
+  const queryBuilder = new PaginatedQueryBuilder(
+    Discount.find(),
+    query,
+    "/api/v1/discounts",
+  );
+
+  const result = await queryBuilder
     .filter()
+    .search()
     .sort()
+    .selectFields()
     .paginate()
-    .fields();
-  return discountQuery.modelQuery;
+    .execute();
+
+  return result;
 };
 
 const applyDiscountByCode = async (code: string, itemsTotalPrice: number) => {

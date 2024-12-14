@@ -6,6 +6,7 @@ import orderRoutes from "../modules/order/order.routes";
 import paymentRoutes from "../modules/payment/payment.routes";
 import productRoutes from "../modules/product/product.routes";
 import reviewRoutes from "../modules/review/review.routes";
+import userRoutes from "../modules/user/user.routes";
 
 const router: Router = Router();
 
@@ -36,12 +37,16 @@ const moduleRoutes: IModuleRoute[] = [
     routes: faqQuestionRoutes,
   },
   {
-    path: "/payment",
+    path: "/payments",
     routes: paymentRoutes,
   },
   {
     path: "/auth",
     routes: authRoutes,
+  },
+  {
+    path: "/users",
+    routes: userRoutes,
   },
 ];
 

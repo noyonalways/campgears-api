@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import config from "../../config";
 import { IOrderItem } from "../order/order.interface";
-const stripe = new Stripe(config.strip_secret_key as string);
+const stripe = new Stripe(config.STRIPE_SECRET_KEY as string);
 
 interface IPaymentInput {
   items: IOrderItem[];
@@ -27,8 +27,8 @@ export const initialSession = async (paymentInput: IPaymentInput) => {
     };
   });
 
-  const successUrl = `${config.client_base_url}/payment/confirmation?transactionId=${paymentInput.transactionId}&sessionId={CHECKOUT_SESSION_ID}&email=${paymentInput.customerEmail}`;
-  const cancelUrl = `${config.client_base_url}/payment/order-cancel?transactionId=${paymentInput.transactionId}`;
+  const successUrl = `${config.CLIENT_BASE_URL}/payment/confirmation?transactionId=${paymentInput.transactionId}&sessionId={CHECKOUT_SESSION_ID}&email=${paymentInput.customerEmail}`;
+  const cancelUrl = `${config.CLIENT_BASE_URL}/payment/order-cancel?transactionId=${paymentInput.transactionId}`;
 
   const sessionsCreateConfig: Stripe.Checkout.SessionCreateParams = {
     line_items: listItems,

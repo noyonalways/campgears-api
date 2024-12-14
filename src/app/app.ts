@@ -1,4 +1,5 @@
 import "colors";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Application } from "express";
 import helmet from "helmet";
@@ -20,10 +21,13 @@ app.use(
       "http://192.168.0.116:5173",
       "https://campgears.vercel.app",
       "https://campgears.noyonrahman.xyz",
+      "https://admin-campgears.vercel.app",
+      "https://admin-campgears.noyonrahman.xyz",
     ],
   }),
 );
 app.use(express.json());
+app.use(cookieParser());
 
 // application routes
 app.use(rootRoutes);

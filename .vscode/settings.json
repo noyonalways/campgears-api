@@ -7,6 +7,7 @@
     "source.organizeImports": "always"
   },
   "files.autoSave": "off",
+  "prettier.prettierPath": "./node_modules/prettier",
   "cSpell.words": [
     "campgears",
     "datetime",
