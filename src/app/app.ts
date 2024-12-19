@@ -26,6 +26,7 @@ app.use(
       "https://admin-campgears.vercel.app",
       "https://admin-campgears.noyonrahman.xyz",
     ],
+    credentials: true,
   }),
 );
 app.use(express.json());
