@@ -18,7 +18,9 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      "http://localhost:3000",
       "http://192.168.0.116:5173",
+      "http://192.168.0.116:3000",
       "https://campgears.vercel.app",
       "https://campgears.noyonrahman.xyz",
       "https://admin-campgears.vercel.app",
