@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Schema, model } from "mongoose";
 import config from "../../config";
-import { UserRoles, UserStatus } from "./user.constant";
+import { AuthProviders, UserRoles, UserStatus } from "./user.constant";
 import { IUser, IUserModel } from "./user.interface";
 
 const userSchema = new Schema<IUser, IUserModel>(
@@ -31,7 +31,6 @@ const userSchema = new Schema<IUser, IUserModel>(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
       select: 0,
     },
     needsPasswordChange: {
@@ -40,6 +39,14 @@ const userSchema = new Schema<IUser, IUserModel>(
     },
     passwordChangeAt: {
       type: Date,
+    },
+    authProvider: {
+      type: String,
+      enum: {
+        values: AuthProviders,
+        message: "{VALUE} is not a valid auth provider",
+      },
+      default: null,
     },
     isDeleted: {
       type: Boolean,

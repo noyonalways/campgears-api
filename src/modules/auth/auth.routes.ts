@@ -17,6 +17,12 @@ router.post(
   authController.login,
 );
 
+router.post(
+  "/social-login",
+  validateRequest(authValidation.socialLogin),
+  authController.socialLogin,
+);
+
 router.get(
   "/me",
   auth(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),

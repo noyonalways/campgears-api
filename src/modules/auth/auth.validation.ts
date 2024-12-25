@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AuthProviders } from "../user/user.constant";
 
 const register = z.object({
   body: z
@@ -33,6 +34,31 @@ const login = z.object({
       password: z.string({
         required_error: "Password is required",
         invalid_type_error: "Password must be a string",
+      }),
+    })
+    .strict(),
+});
+
+const socialLogin = z.object({
+  body: z
+    .object({
+      name: z.string({
+        required_error: "Name is required",
+        invalid_type_error: "Name must be a string",
+      }),
+      email: z
+        .string({
+          required_error: "Email is required",
+          invalid_type_error: "Email must be a string",
+        })
+        .email("Provide a valid email address"),
+      avatar: z
+        .string({
+          invalid_type_error: "Avatar must be a string",
+        })
+        .optional(),
+      authProvider: z.enum([...AuthProviders] as [string, ...string[]], {
+        required_error: "Auth provider is required",
       }),
     })
     .strict(),
@@ -99,6 +125,7 @@ const resetPassword = z.object({
 export const authValidation = {
   register,
   login,
+  socialLogin,
   refreshToken,
   changePassword,
   forgetPassword,

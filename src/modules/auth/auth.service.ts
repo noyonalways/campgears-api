@@ -58,14 +58,86 @@ const login = async (payload: z.infer<typeof authValidation.login>["body"]) => {
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
-  if (!(await User.isPasswordMatch(payload.password, user.password))) {
+
+  if (!user.password) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "Incorrect credentials");
+  }
+
+  if (!(await User.isPasswordMatch(payload?.password, user.password))) {
     throw new AppError(httpStatus.BAD_REQUEST, "Invalid Credentials");
   }
 
   const jwtPayload = {
-    id: user._id,
-    email: user.email,
-    role: user.role,
+    id: user?._id,
+    email: user?.email,
+    authProvider: user?.authProvider,
+    role: user?.role,
+  };
+
+  const accessToken = User.createToken(
+    jwtPayload,
+    config.JWT_ACCESS_TOKEN_SECRET!,
+    config.JWT_ACCESS_TOKEN_EXPIRES_IN!,
+  );
+  const refreshToken = User.createToken(
+    jwtPayload,
+    config.JWT_REFRESH_TOKEN_SECRET!,
+    config.JWT_REFRESH_TOKEN_EXPIRES_IN!,
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
+
+// social login
+const socialLogin = async (
+  payload: z.infer<typeof authValidation.socialLogin>["body"],
+) => {
+  let user = await User.findOne({ email: payload.email });
+
+  if (!user) {
+    const session = await User.startSession();
+    try {
+      session.startTransaction();
+
+      const newUser = await User.create([{ ...payload }], { session });
+      if (!newUser.length) {
+        throw new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          "Failed to register user",
+        );
+      }
+
+      const userProfile = await Profile.create(
+        [{ user: newUser[0]._id, ...payload }],
+        {
+          session,
+        },
+      );
+      if (!userProfile.length) {
+        throw new AppError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          "Failed to create user profile",
+        );
+      }
+
+      user = newUser[0];
+      await session.commitTransaction();
+      session.endSession();
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      throw error;
+    }
+  }
+
+  const jwtPayload = {
+    id: user?._id,
+    email: user?.email,
+    authProvider: user?.authProvider,
+    role: user?.role,
   };
 
   const accessToken = User.createToken(
@@ -146,7 +218,7 @@ const changePassword = async (
   }
 
   // check the password is correct
-  if (!(await User.isPasswordMatch(payload.oldPassword, user.password))) {
+  if (!(await User.isPasswordMatch(payload.oldPassword, user?.password))) {
     throw new AppError(httpStatus.BAD_REQUEST, "Password did not matched");
   }
 
@@ -323,6 +395,7 @@ const resetPassword = async (
 export const authService = {
   register,
   login,
+  socialLogin,
   getMe,
   generateNewAccessToken,
   changePassword,
