@@ -1,31 +1,27 @@
 import httpStatus from "http-status";
-import QueryBuilder from "mongoose-dynamic-querybuilder";
+import { PaginatedQueryBuilder } from "../../builders";
 import AppError from "../../errors/AppError";
 import { SearchFields } from "./product.constant";
 import { IProduct } from "./product.interface";
 import Product from "./product.model";
 
-const getAll = (query: Record<string, unknown>) => {
-  let productQuery;
+const getAll = async (query: Record<string, unknown>) => {
+  const queryBuilder = new PaginatedQueryBuilder(
+    Product.find(),
+    query,
+    "/api/v1/products",
+  );
 
-  if (query.minPrice && query.maxPrice) {
-    productQuery = new QueryBuilder(Product.find({}), query)
-      .extraFilter({
-        price: { $gte: Number(query.minPrice), $lte: Number(query.maxPrice) },
-      })
-      .sort()
-      .paginate()
-      .fields()
-      .search(SearchFields);
-  } else {
-    productQuery = new QueryBuilder(Product.find({}), query)
-      .filter()
-      .sort()
-      .paginate()
-      .fields()
-      .search(SearchFields);
-  }
-  return productQuery.modelQuery;
+  const result = await queryBuilder
+    .filter()
+    .search(SearchFields)
+    .sort()
+    .selectFields()
+    .populateFields(["category"])
+    .paginate()
+    .execute();
+
+  return result;
 };
 
 const create = (payload: IProduct) => {

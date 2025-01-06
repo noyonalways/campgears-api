@@ -40,12 +40,13 @@ const productSchema = new Schema<IProduct, IProductModel>(
       required: [true, "Brand is required"],
     },
     category: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Category",
       required: [true, "Category is required"],
     },
     subCategory: {
-      type: String,
-      required: [true, "Sub Category is required"],
+      type: Schema.Types.ObjectId,
+      ref: "SubCategory",
     },
     image: {
       type: String,

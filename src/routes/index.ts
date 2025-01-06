@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authRoutes from "../modules/auth/auth.routes";
+import categoryRoutes from "../modules/category/category.routes";
 import discountRoutes from "../modules/discount/discount.routes";
 import faqQuestionRoutes from "../modules/faq-question/faqQuestion.routes";
 import orderRoutes from "../modules/order/order.routes";
@@ -23,6 +24,10 @@ const moduleRoutes: IModuleRoute[] = [
   {
     path: "/products", // product
     routes: productRoutes,
+  },
+  {
+    path: "/categories", // review
+    routes: categoryRoutes,
   },
   {
     path: "/orders",

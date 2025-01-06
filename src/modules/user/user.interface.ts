@@ -3,6 +3,7 @@ import { Model } from "mongoose";
 
 export type TUserStatus = "active" | "inactive" | "blocked";
 export type TUserRole = "super-admin" | "admin" | "user";
+export type TAuthProvider = "google" | "github" | "facebook";
 
 export interface IUser {
   email: string;
@@ -12,6 +13,7 @@ export interface IUser {
   isDeleted: boolean;
   needsPasswordChange?: boolean;
   passwordChangeAt?: Date;
+  authProvider?: TAuthProvider;
 }
 
 export interface IUserModel extends Model<IUser> {

@@ -1,4 +1,4 @@
-import { Document, Model } from "mongoose";
+import { Document, Model, Types } from "mongoose";
 
 export type TProductStatus = "in-stock" | "out-of-stock" | "discontinued";
 
@@ -15,8 +15,8 @@ export interface IProduct {
   status: TProductStatus;
   price: number;
   color: string;
-  category: string;
-  subCategory: string;
+  category: Types.ObjectId;
+  subCategory: Types.ObjectId;
   brand: string;
   tags: string[];
   image: string;
